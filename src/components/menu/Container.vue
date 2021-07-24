@@ -55,7 +55,7 @@ export default {
 body {
   font-family: "Montserrat", sans-serif !important;
   background-color: #ebebeb !important;
-  line-height: 2.5;
+ overflow-x: hidden;
 }
 
 html {

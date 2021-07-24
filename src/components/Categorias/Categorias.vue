@@ -1,15 +1,17 @@
 <template>
-  <div>
-    <div
-      v-for="(categoria, index) in categorias"
-      :key="index"
-      class="snip1325"
-      @click="verProductos(categoria)"
-    >
-      <img alt="image slot" :src="categoria.imagenURL" />
-      <!--  <div class="gradient-overlay"></div> -->
-    </div>
-  </div>
+<div>
+    <b-row class="text-center" cols="2" cols-sm="8" cols-md="8" cols-lg="4">
+      <b-col
+        v-for="(categoria, index) in currentPageClubs"
+        :key="index"
+        class="mb-2"
+      >
+      <div  class="zoom" >
+        <img fluid alt="Responsive image" @click="verProductos(categoria)" :src="categoria.imagenURL" /><br>
+      </div>
+      </b-col>
+    </b-row>
+</div>
 </template>
 
 
@@ -20,60 +22,71 @@ export default {
     categorias: {
       type: Array,
     },
-      productosSeleccionados: {
+    productosSeleccionados: {
       type: Array,
     },
   },
   components: {},
   data() {
-    return {};
+    return {
+      paginatedClubs: [],
+      nbPages: 0,
+      ubicaicon: 0,
+      nbRowPerPage: 10,
+      currentPageIndex: 0,
+      indice: 1,
+      productos: [],
+      loading: true,
+    };
   },
   mounted() {},
+  computed: {
+    currentPageClubs() {
+      this.createPages();
+
+      return this.paginatedClubs[this.currentPageIndex];
+    },
+  },
   methods: {
-    verProductos(categoria){
-      console.log(categoria.productos)
-       this.$router.push({
-          name: "productosCategoria",
-          params: {
-            bestProducts: categoria.productos,
-            productosSeleccionados: this.productosSeleccionados
-          },
-        });
-    }
+    createPages() {
+      let lengthAll = Object.keys(this.categorias).length;
+      this.nbPages = 0;
+
+      for (let i = 0; i < lengthAll; i = i + this.nbRowPerPage) {
+        this.paginatedClubs[this.nbPages] = this.categorias.slice(
+          i,
+          i + this.nbRowPerPage
+        );
+        this.nbPages++;
+      }
+    },
+    verProductos(categoria) {
+      console.log(categoria.productos);
+      this.$router.push({
+        name: "productosCategoria",
+        params: {
+          bestProducts: categoria.productos,
+          productosSeleccionados: this.productosSeleccionados,
+        },
+      });
+    },
   },
 };
 </script>
 
 
 <style>
-.body {
-  background-color: #ebebeb;
-  height: auto;
-}
+
 .best-products {
   margin-bottom: 10px;
 }
-/* 
-.snip1325 {
-  position: relative;
-  overflow: hidden;
-  margin: 10px;
-  min-width: 255px;
-  max-width: 315px;
-  height: 220px;
-  width: 100%;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+
+.zoom {
+    transition: transform .2s; 
 }
-.snip1325 img {
-  height: 100%;
-  position: absolute;
-  right: 0;
-  -webkit-transition: all 2s ease-out;
-  transition: all 2s ease-out;
+ 
+.zoom:hover {
+    transform: scale(1.1); 
+     cursor: pointer;
 }
-.snip1325:hover img,
-.snip1325.hover img {
-  -webkit-transform: translateX(130px);
-  transform: translateX(130px);
-} */
 </style>

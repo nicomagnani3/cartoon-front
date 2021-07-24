@@ -1,8 +1,7 @@
 <template>
   <div>
     <div class="project-image-wrapper">
-      <img class="project-image" :src="item.url" />
-      <!--  <div class="gradient-overlay"></div> -->
+      <img class="project-image" :src="item.url" />     
     </div>
     <div class="cuerpo">
       <div style="text-align: center">
@@ -32,6 +31,7 @@
           placeholder="1"
         ></b-form-spinbutton>
       </div>
+      <br>
       <div class="d-flex justify-content-between align-items-center">
         <div
           class="d-flex justify-content-center"
@@ -46,7 +46,7 @@
               src="@/assets/carrito.png"
               alt=""
               class="imagnesIcon"
-            />&nbsp;&nbsp;
+            />
           </a>
         </div>
       </div>
@@ -107,7 +107,5 @@ export default {
 };
 </script>
 <style >
-#selector {
-  text-align: center;
-}
+
 </style>

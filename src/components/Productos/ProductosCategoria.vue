@@ -53,10 +53,7 @@ export default {
 
 
 <style>
-.body {
-  background-color: #ebebeb;
-  height: auto;
-}
+
 .best-products {
   margin-bottom: 10px;
 }

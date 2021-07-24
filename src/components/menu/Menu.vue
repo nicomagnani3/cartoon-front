@@ -22,20 +22,21 @@
               v-for="categoria in categorias"
               :key="categoria.value"
               :value="categoria.value"
+                 @click="verProductos(categoria)"
               >{{ categoria.categoria }}</b-dropdown-item
             >
           </b-nav-item-dropdown>
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-form right>
-            <div style="float: right">
+            <div >
               <div class="notify-badge">
-                {{ this.productosSeleccionados.length }}
+                <p>{{ this.calcularCantidad() }}</p>
               </div>
               <a variant="white" @click="verMiCarrito()" style="cursor: pointer"
                 ><img
                   style="float: right; max-width: 40px"
-                  src="@/assets/carrito.png"
+                  src="@/assets/carro.png"
               /></a>
             </div>
           </b-nav-form>
@@ -116,6 +117,13 @@ export default {
      okDetalles() {
       this.$refs["modalCarrito"].hide();
     },
+    calcularCantidad() {
+      let cantidad = 0;
+      this.productosSeleccionados.forEach((pedido) => {
+        cantidad = Number(cantidad) + Number(pedido.cantidad);
+      });
+      return cantidad;
+    },
     async getCategorias() {
       try {
         const response = await CategoriasService.getCategorias();
@@ -137,6 +145,20 @@ export default {
         return 0;
       });
     },
+     verProductos(categoria){
+      console.log(categoria.productos)
+       this.$router.push({
+          name: "productosCategoria",
+          query: {
+          q: this.searchQuery,
+          t: new Date().getTime(),
+        },
+          params: {
+            bestProducts: categoria.productos,
+            productosSeleccionados: this.productosSeleccionados
+          },
+        });
+    }
   },
 };
 </script>

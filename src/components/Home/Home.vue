@@ -11,15 +11,7 @@
       <small>Estás a un paso de pedir tus stickers</small>
     </div>
     <div v-else>
-      <br />
-    <!--   <div style="position: fixed; right: 2%; margin: 33px 6px 6px 5px">
-        <div class="notify-badge">{{ this.productosSeleccionados.length    }}</div>
-        <a variant="white" @click="verMiCarrito()" style="cursor: pointer"
-          ><img
-            style="float: right; max-width: 40px"
-            src="@/assets/carrito.png"
-        /></a>
-      </div> -->
+      <br />   
       <div class="body">
         <b-carousel
           id="carousel-1"
@@ -62,8 +54,7 @@
         </ol>
       </div>
       <Productos
-        :bestProducts="this.bestProducts"
-    
+        :bestProducts="this.bestProducts"    
         :productosSeleccionados="this.productosSeleccionados"
       ></Productos>
       <div aria-label="breadcrumb">
@@ -79,21 +70,7 @@
         </ol>
       </div>
       <Categorias  :categorias="this.categiaHome" :productosSeleccionados="this.productosSeleccionados"></Categorias>
-      <div class="modalCarrito">
-        <b-modal
-          title="Mi pedido"
-          class="modalCarrito"
-          centered
-          ref="modalCarrito"
-          hide-footer
-          body-bg-variant="light"
-          footer-bg-variant="light"
-          header-bg-variant="light"
-        >
-          <Carrito @okDetalles="okDetalles" :miPedido="this.productosSeleccionados"></Carrito>
-        </b-modal>
       </div>
-    </div>
   </div>
 </template>
 
@@ -101,7 +78,7 @@
 <script>
 import Productos from "@/components/Productos/Productos.vue";
 import Categorias from "@/components/Categorias/Categorias.vue";
-import Carrito from "@/components/Carrito/Carrito.vue";
+
 import axios from "axios";
 import ProductosService from "@/services/ProductosService";
 import CategoriasService from "@/services/CategoriasService";
@@ -110,9 +87,8 @@ import CategoriasService from "@/services/CategoriasService";
 export default {
   name: "Home",
 
-  components: { Productos, Categorias, Carrito },
-  props: {
-   
+  components: { Productos, Categorias, },
+  props: {   
       productosSeleccionados: {
       type: Array,
     },
@@ -164,13 +140,6 @@ export default {
       }
     },
   
-    verMiCarrito() {
-       this.$refs["modalCarrito"].show();
-      console.log(this.productosSeleccionados   ); 
-    },
-    okDetalles() {
-      this.$refs["modalCarrito"].hide();
-    },
   },
 };
 </script>
@@ -183,6 +152,7 @@ export default {
   background-color: #f3f2f2;
   height: auto;
   font-family: "Roboto";
+  overflow-x: hidden;
 }
 small,
 p,
