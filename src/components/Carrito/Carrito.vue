@@ -13,38 +13,17 @@
         <b-col class="textoPedido">
           <small>
             {{ pedido.nombre }} - {{ pedido.tamaño }}</small
-          ></b-col
+          >
+          <small>
+            ${{calcularPrecio(pedido.tamaño)}}</small
+          >
+          </b-col
         >
 
         <b-col col lg="1">
-          <b-button variant="danger" style="float: right" @click="borrarPedido(pedido)">X</b-button></b-col
+          <b-button variant="danger" style="float: right" @click="borrarPedido(index)">X</b-button></b-col
         >
       </b-row>
-
-      <!--  
-      <div class="izquierda">
-        <img
-          style="
-            max-width: 65px;
-            border: 0px solid transparent;
-
-            margin: auto;
-            height: 73px;
-            object-fit: contain;
-          "
-          :src="pedido.imagen"
-          alt="Card image cap"
-        />
-      </div>
-      <div class="derecha">
-        <small>
-          {{ pedido.nombre }} - {{ pedido.tamaño }} - x{{
-            pedido.cantidad
-          }}</small
-        >
-      </div>
-     
-          <b-button variant="danger" style="float:right">X</b-button> -->
     </div>
     <div>
       <div style="text-align: right">
@@ -54,13 +33,15 @@
             >Debe elegir como minimo 5 stickers</small
           >
         </div>
-        <small> Total: ${{ calcularTotal() }} </small>
+        <div>
+        <small style="float:left"> Cantidad: {{ calcularCantidad() }} </small>
+        <small><b> Total: ${{ calcularTotal() }} </b></small></div>
       </div>
       <b-button
         class="mt-2"
         variant="success"
         block
-        :disabled="calcularCantidad() < 4"
+        :disabled="calcularCantidad() < 5"
         :href="
           'https://mail.google.com/mail/?view=cm&fs=1&to=cartoon.tag@hotmail.com' +
           '&body=Hola!%20,queria%20pedir%20' +
@@ -107,6 +88,31 @@ export default {
       });
       return cantidad;
     },
+    calcularPrecio(tamaño){
+      if (this.miPedido.length < 20) {
+         if (tamaño == "Mini") {
+            return this.mini
+          }
+          if (tamaño == "Regular") {
+            return this.regular
+          }
+          if (tamaño == "Grande") {
+            return this.grande
+          }
+      }else{
+        if (tamaño == "Mini") {
+          return this.mayor20unidadesMini
+          }
+          if (tamaño == "Regular") {
+            return this.mayor20unidadesRegular
+          }
+          if (tamaño == "Grande") {
+            return this.mayor20unidadesGrande
+          }
+
+
+      }
+    },
     calcularTotal() {
       let total = 0;
       if (this.miPedido.length < 20) {
@@ -136,6 +142,7 @@ export default {
       }
       return total;
     },
+   
     armarPedidoTexto() {
       let pedidoMail = "";
       this.miPedido.forEach((pedido) => {
@@ -156,28 +163,9 @@ export default {
       return pedidoMail;
     },
     borrarPedido(pedidoBorrar){
-    //acomodar bien borra mal, borra el que es pero fijarse duplicados
-    //queda undefinided localstorage
-      let producto,tamaño,cantidad
-      localStorage.removeItem("pedido");
-      localStorage.removeItem("tamaños");
-      localStorage.removeItem("cantidad");
-      this.miPedido.forEach(pedido => {
-          if ((pedido.id == pedidoBorrar.id) && (pedido.cantidad == pedidoBorrar.cantidad)
-            && (pedido.tamaño == pedidoBorrar.tamaño)){
-                  console.log("entra")
-            
-            }else{
-              producto = producto + "," + pedido.id;
-            tamaño = tamaño + "," + pedido.tamaño;
-            cantidad = cantidad + "," + pedido.cantidad;
-            }
-      });
-      localStorage.setItem("pedido", producto);
-      localStorage.setItem("tamaños", tamaño);
-      localStorage.setItem("cantidad", cantidad);
-   
-
+      console.log(pedidoBorrar)
+this.miPedido.splice(pedidoBorrar,1);
+console.log(this.miPedido)
     }
   },
 };

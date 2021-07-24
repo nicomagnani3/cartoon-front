@@ -57,13 +57,13 @@
 <script>
 export default {
   name: "cardTemplate",
-  props: ["item"],
+  props: ["item", "productosSeleccionados"],
   data() {
-    return {      
+    return {
       cantidad: 1,
       selected: "Regular",
       options: [
-        { value: null, text: "Tamaño", disabled: true, },
+        { value: null, text: "Tamaño", disabled: true },
         { value: "Mini", text: "Mini" },
         { value: "Regular", text: "Regular" },
         { value: "Grande", text: "Grande" },
@@ -74,40 +74,40 @@ export default {
 
   methods: {
     mostrarImagen(item) {
-      /*  let url =
-        "https://cartoon-tag.herokuapp.com" +
-        item.foto[0].formats.thumbnail.url;*/
       return item.url;
     },
     cambiarCantidad() {
       this.cantidad = 1;
     },
     agregarCarrito(item) {
-      let producto = item.id;
-      let pedido = localStorage.getItem("pedido");
-      let tamaños = localStorage.getItem("tamaños");
-      let cantidadPedida = localStorage.getItem("cantidad");
-
-      if (pedido == null) {
-        pedido = producto;
-        tamaños = this.selected;
-        cantidadPedida = this.cantidad;
-      } else {
-        pedido = pedido + "," + producto;
-        tamaños = tamaños + "," + this.selected;
-        cantidadPedida = cantidadPedida + "," + this.cantidad;
+      if (!this.yaEstaSeleccionado(item.id, this.selected, this.cantidad)) {
+        this.productosSeleccionados.push({
+          pedido: item.id,
+          tamaño: this.selected,
+          cantidad: this.cantidad,
+          imagen: item.url,
+          nombre: item.nombre,
+        });
+        this.$emit("seleccionoProducto");
       }
-      localStorage.setItem("pedido", pedido);
-      localStorage.setItem("tamaños", tamaños);
-      localStorage.setItem("cantidad", cantidadPedida);
-      this.$emit("seleccionoProducto");
+    },
+    yaEstaSeleccionado(id, tamaño, cantidad) {
+      let retornan = false;
+      this.productosSeleccionados.forEach((pedido) => {
+        if (pedido.pedido == id && pedido.tamaño == tamaño) {
+          console.log(cantidad);
+          pedido.cantidad = Number(pedido.cantidad) + Number(cantidad);
+          retornan = true;
+        }
+      });
+      return retornan;
     },
   },
   mounted() {},
 };
 </script>
 <style >
-#selector{
+#selector {
   text-align: center;
 }
 </style>

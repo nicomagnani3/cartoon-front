@@ -12,14 +12,14 @@
     </div>
     <div v-else>
       <br />
-      <div style="position: fixed; right: 2%; margin: 33px 6px 6px 5px">
-        <div class="notify-badge">{{ this.cantidadProductos }}</div>
+    <!--   <div style="position: fixed; right: 2%; margin: 33px 6px 6px 5px">
+        <div class="notify-badge">{{ this.productosSeleccionados.length    }}</div>
         <a variant="white" @click="verMiCarrito()" style="cursor: pointer"
           ><img
             style="float: right; max-width: 40px"
             src="@/assets/carrito.png"
         /></a>
-      </div>
+      </div> -->
       <div class="body">
         <b-carousel
           id="carousel-1"
@@ -63,7 +63,8 @@
       </div>
       <Productos
         :bestProducts="this.bestProducts"
-        @seleccionoProducto="seleccionoProducto"
+    
+        :productosSeleccionados="this.productosSeleccionados"
       ></Productos>
       <div aria-label="breadcrumb">
         <ol class="breadcrumb" style="background: #9d2d27">
@@ -77,7 +78,7 @@
           </li>
         </ol>
       </div>
-      <Categorias></Categorias>
+      <Categorias  :categorias="this.categiaHome" :productosSeleccionados="this.productosSeleccionados"></Categorias>
       <div class="modalCarrito">
         <b-modal
           title="Mi pedido"
@@ -89,7 +90,7 @@
           footer-bg-variant="light"
           header-bg-variant="light"
         >
-          <Carrito @okDetalles="okDetalles" :miPedido="this.miPedido"></Carrito>
+          <Carrito @okDetalles="okDetalles" :miPedido="this.productosSeleccionados"></Carrito>
         </b-modal>
       </div>
     </div>
@@ -103,23 +104,34 @@ import Categorias from "@/components/Categorias/Categorias.vue";
 import Carrito from "@/components/Carrito/Carrito.vue";
 import axios from "axios";
 import ProductosService from "@/services/ProductosService";
+import CategoriasService from "@/services/CategoriasService";
+
+
 export default {
   name: "Home",
 
   components: { Productos, Categorias, Carrito },
+  props: {
+   
+      productosSeleccionados: {
+      type: Array,
+    },
+  },
 
   data() {
     return {
       bestProducts: [],
+      categorias: [],
       ultimoPedido: [],
       cantidadProductos: 0,
       miPedido: [],
       loading: true,
+      categiaHome:[],
     };
   },
   mounted() {
     axios
-      .all([this.getProductos()])
+      .all([this.getProductos(),this.getCategorias()])
       .then(() => {
         this.loading = false;
       })
@@ -137,50 +149,24 @@ export default {
         console.log(err);
       }
     },
-    seleccionoProducto() {
-      let pedido = localStorage.getItem("pedido");
-      let tamaños = localStorage.getItem("tamaños");
-      let cantidad = localStorage.getItem("cantidad");
-      if (pedido == null) {
-        this.cantidadProductos = 0;
-      } else {
-        let comprasArray = pedido.split(",");
-        let tamañosArray = tamaños.split(",");
-        let cantidadArray = cantidad.split(",");
-        let seleccionados = [];
+    async getCategorias() {
+      try {
+        const response = await CategoriasService.getCategorias();
+        this.categorias = response.data;
+       
+        this.categorias.forEach(categoria => {
+          if (categoria.imagenURL != null)
+            this.categiaHome.push( categoria)
      
-          for (let index = 0; index < comprasArray.length; index++) {
-            for (let prod of this.bestProducts) {
-              if (prod.id == comprasArray[index]) {
-                seleccionados.push({
-                  nombre: prod.nombre,
-                  tamaño: tamañosArray[index],
-                  id: prod.id,
-                  imagen: prod.url,
-                  cantidad: cantidadArray[index],
-                });
-              }
-            }
-          }
-          this.miPedido = seleccionados;
-          this.cantidadProductos = seleccionados.length;
-        }
-      
-    },
-    yaEstaSeleccionado(ultimoProducto, tamaño,cantidad) {
-      this.miPedido.forEach((pedido) => {
-        if (pedido.id == ultimoProducto && tamaño == pedido.tamaño) {
-          console.log("entra")
-          pedido.cantidad= Number(pedido.cantidad) + Number(cantidad)
-          return true;
-        }
-      });
-      return false;
+        });
+      } catch (err) {
+        console.log(err);
+      }
     },
   
     verMiCarrito() {
-      this.$refs["modalCarrito"].show();
-      console.log(this.miPedido);
+       this.$refs["modalCarrito"].show();
+      console.log(this.productosSeleccionados   ); 
     },
     okDetalles() {
       this.$refs["modalCarrito"].hide();

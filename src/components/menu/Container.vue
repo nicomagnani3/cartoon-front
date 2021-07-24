@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="wrapper">
-      <Menu />
-      <router-view class="content" />
+      <Menu       :productosSeleccionados="this.productosSeleccionados" />
+      <router-view class="content"       :productosSeleccionados="this.productosSeleccionados" />
     </div>
     <Footer class="footer" />
   </div>
@@ -17,6 +17,12 @@ export default {
   components: {
     Menu,
     Footer,
+  },
+   data() {
+    return {
+      
+   productosSeleccionados:[]
+    };
   },
   computed: {},
   methods: {

@@ -1,54 +1,47 @@
 <template>
- <div class="best-products">
-    <div class="row">
-      <card-loader :loopCount="6" v-if="loading"/>
-      <div class="col-md-2" v-for="(item, index) in bestProducts" :key="index">
-        <card-template :item="item"/>
-      </div>
+  <div>
+    <div
+      v-for="(categoria, index) in categorias"
+      :key="index"
+      class="snip1325"
+      @click="verProductos(categoria)"
+    >
+      <img alt="image slot" :src="categoria.imagenURL" />
+      <!--  <div class="gradient-overlay"></div> -->
     </div>
   </div>
 </template>
 
 
 <script>
-import axios from "axios";
-import ProductosService from "@/services/ProductosService";
-import CardLoader from "@/components/Productos/CardLoader";
-import CardTemplate from "@/components/Productos/CardTemplate";
 export default {
   name: "Home",
-
-components: { CardLoader, CardTemplate, },
-    data() {
-    return {
-      loading: true,
-    bestProducts:[],
-    };
-  },
-   mounted() {
-    axios
-      .all([this.getProductos()])
-      .then(() => {
-        this.loading = false;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },
-  methods:{
-        async getProductos() {
-      try {
-        const response = await ProductosService.getProductos();
-       
-          this.bestProducts = response.data;
-        
-      } catch (err) {
-            console.log(err)
-      }
+  props: {
+    categorias: {
+      type: Array,
     },
-  }
+      productosSeleccionados: {
+      type: Array,
+    },
+  },
+  components: {},
+  data() {
+    return {};
+  },
+  mounted() {},
+  methods: {
+    verProductos(categoria){
+      console.log(categoria.productos)
+       this.$router.push({
+          name: "productosCategoria",
+          params: {
+            bestProducts: categoria.productos,
+            productosSeleccionados: this.productosSeleccionados
+          },
+        });
+    }
+  },
 };
-
 </script>
 
 
@@ -60,4 +53,27 @@ components: { CardLoader, CardTemplate, },
 .best-products {
   margin-bottom: 10px;
 }
+/* 
+.snip1325 {
+  position: relative;
+  overflow: hidden;
+  margin: 10px;
+  min-width: 255px;
+  max-width: 315px;
+  height: 220px;
+  width: 100%;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+}
+.snip1325 img {
+  height: 100%;
+  position: absolute;
+  right: 0;
+  -webkit-transition: all 2s ease-out;
+  transition: all 2s ease-out;
+}
+.snip1325:hover img,
+.snip1325.hover img {
+  -webkit-transform: translateX(130px);
+  transform: translateX(130px);
+} */
 </style>

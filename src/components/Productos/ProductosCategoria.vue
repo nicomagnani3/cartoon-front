@@ -1,40 +1,53 @@
 <template>
-  <transition-group class="projects" name="projects">
-    <div class="project" v-bind:key="item.nombre" v-for="item in bestProducts">
-        <card-template :item="item" :productosSeleccionados="productosSeleccionados"  @seleccionoProducto="seleccionoProducto" />
-      <br />
-    </div>
-  </transition-group>
+  <div>
+     
+    <transition-group class="projects" name="projects">
+      <div
+        class="project"
+        v-bind:key="item.nombre"
+        v-for="item in this.bestProducts"
+      >
+        <card-template
+          :item="item"
+          :productosSeleccionados="productosSeleccionados"
+          @seleccionoProducto="seleccionoProducto"
+        />
+        <br />
+      </div>
+    </transition-group>
+  </div>
 </template>
 
 
 <script>
-
-import CardTemplate from "@/components/Productos/CardTemplate"; 
+import CardTemplate from "@/components/Productos/CardTemplate";
 export default {
-  name: "Home",
+  name: "ProductosCategoria",
   props: {
     bestProducts: {
       type: Array,
     },
-      productosSeleccionados: {
+    productosSeleccionados: {
       type: Array,
     },
   },
 
-    components: {  CardTemplate }, 
+  components: { CardTemplate },
   data() {
     return {
       loading: true,
-   
+      productos: [],
     };
   },
   mounted() {},
+  created() {
+    console.log(this.bestProducts);
+  },
   methods: {
     seleccionoProducto() {
       this.$emit("seleccionoProducto");
     },
-  }
+  },
 };
 </script>
 
@@ -91,14 +104,11 @@ export default {
 .project-image-wrapper {
   position: relative;
   background: #9d2d27;
- 
 }
 
-
-
 .project-image {
-       max-width: 183px;
-           border: 10px solid transparent;
+  max-width: 183px;
+  border: 10px solid transparent;
   display: block;
   margin: auto;
   height: 150px;

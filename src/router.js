@@ -5,7 +5,7 @@ import Router from 'vue-router'
 
 
 
-/* Menu */
+import ProductosCategoria from '@/components/Productos/ProductosCategoria.vue'
 import container from '@/components/menu/Container.vue'
 import home from '@/components/Home/Home.vue'
 
@@ -23,9 +23,15 @@ const router = new Router({
       {
         path: '/',
         name: 'Home',
-        component: home 
-              
+        component: home               
        },     
+       {
+        path: '/ProductosCategoria',
+         name: 'productosCategoria',
+        component: ProductosCategoria,   
+        props: true
+      
+       },
     ]
     },
   
