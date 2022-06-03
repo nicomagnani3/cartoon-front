@@ -1,20 +1,43 @@
 <template>
   <div>
-     
-    <transition-group class="projects" name="projects">
-      <div
-        class="project"
-        v-bind:key="item.nombre"
-        v-for="item in this.bestProducts"
-      >
+    <div class="volver">
+      <b-button @click="volver()" variant="outline-secondary">
+        <b-icon icon="arrow-left-short"></b-icon>Volver
+      </b-button>
+    </div>
+     <div  class="container-fluid">
+    <b-row
+      class="projects"
+      name="projects"
+      cols="2"
+      cols-sm="8"
+      cols-md="8"
+      cols-lg="6"
+    >
+      <b-col v-for="(item, index) in bestProducts" :key="index" class="columnaCards" >
+        <div class="project">
+         <card-template
+          :item="item"
+          :productosSeleccionados="productosSeleccionados"
+          @seleccionoProducto="seleccionoProducto"
+          :nombreCategoria="nombreCategoria"
+        />
+        <br />
+        </div>
+      </b-col>
+    </b-row>
+  </div>
+ <!--    <transition-group class="projects" name="projects">
+      <div class="project" v-for="(item, index) in bestProducts" :key="index">
         <card-template
           :item="item"
           :productosSeleccionados="productosSeleccionados"
           @seleccionoProducto="seleccionoProducto"
+          :nombreCategoria="nombreCategoria"
         />
         <br />
       </div>
-    </transition-group>
+    </transition-group> -->
   </div>
 </template>
 
@@ -22,7 +45,7 @@
 <script>
 import CardTemplate from "@/components/Productos/CardTemplate";
 export default {
-  name: "ProductosCategoria",
+  name: "stickers",
   props: {
     bestProducts: {
       type: Array,
@@ -30,22 +53,25 @@ export default {
     productosSeleccionados: {
       type: Array,
     },
+    nombreCategoria: {
+      type: String,
+    },
   },
 
   components: { CardTemplate },
   data() {
-    return {
-      loading: true,
-      productos: [],
-    };
+    return {};
   },
   mounted() {},
   created() {
-    console.log(this.bestProducts);
+    window.scrollTo(0, 0);
   },
   methods: {
     seleccionoProducto() {
       this.$emit("seleccionoProducto");
+    },
+    volver() {
+      this.$router.push("/");
     },
   },
 };
@@ -53,7 +79,6 @@ export default {
 
 
 <style>
-
 .best-products {
   margin-bottom: 10px;
 }
@@ -70,6 +95,12 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+}
+.volver {
+  margin-bottom: 50px;
+  margin-top: 25px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .projects-enter {
@@ -91,27 +122,11 @@ export default {
   transition: all 0.35s ease-in-out;
   margin: 10px;
   box-shadow: 0px 2px 8px lightgrey;
-  border-radius: 3px;
   width: 180px;
-
+  border-radius: 13px;
   flex-direction: column;
   align-items: center;
 }
 
-.project-image-wrapper {
-  position: relative;
-  background: #9d2d27;
-}
 
-.project-image {
-  max-width: 183px;
-  border: 10px solid transparent;
-  display: block;
-  margin: auto;
-  height: 150px;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-}
 </style>

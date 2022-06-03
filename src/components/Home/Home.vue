@@ -1,76 +1,67 @@
 <template>
   <div>
-    <div v-if="loading" class="text-center">
-      <br /><br /><br />
-      <img
-        class="logo"
-        src="@/assets/logoRojo.png"
-        alt=""
-        height="auto"
-      /><br /><br />
-      <small>Estás a un paso de pedir tus stickers</small>
+    <br />
+    <div class="body">
+      <b-carousel
+        id="carousel-fade"
+        :interval="5000"
+        fade
+        indicators
+        background="#ababab"
+        img-width="1024"
+      >
+        <div>
+          <b-carousel-slide
+            img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1626989129/Slider/1_x9yfey.png"
+            class="item"
+            alt="image slot 1"
+          ></b-carousel-slide>
+          <b-carousel-slide
+            img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1650085159/Slider/PRECIOS_1_wxraz6.png"
+            class="item"
+            alt="image slot 1"
+          ></b-carousel-slide>
+          <b-carousel-slide
+            img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1650085159/Slider/PRECIOS_2_nldfkj.png"
+            class="item"
+            alt="image slot 2"
+          ></b-carousel-slide>
+          <b-carousel-slide
+            img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1650085159/Slider/PRECIOS_3_omitx0.png"
+            class="item"
+            alt="image slot 3"
+          ></b-carousel-slide>
+        </div>
+      </b-carousel>
     </div>
-    <div v-else>
-      <br />   
-      <div class="body">
-        <b-carousel
-          id="carousel-1"
-          :interval="5000"
-          controls
-          indicators
-          background="#ababab"
-          img-width="1024"
-        >
-          <div>
-            <b-carousel-slide
-              img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1626989129/Slider/1_x9yfey.png"
-              class="item"
-              alt="image slot"
-            ></b-carousel-slide>
-            <b-carousel-slide
-              img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1626989127/Slider/2_aacbxt.png"
-              class="item"
-              alt="image slot"
-            ></b-carousel-slide>
-            <b-carousel-slide
-              img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1626989127/Slider/3_vfcuhe.png"
-              class="item"
-              alt="image slot"
-            ></b-carousel-slide>
-          </div>
-        </b-carousel>
-      </div>
-      <br />
-      <div aria-label="breadcrumb">
-        <ol class="breadcrumb" style="background: #9d2d27">
-          <li>
-            <h4 style="color: #ffffff">Los mas pedidos</h4>
-          </li>
-          <li class="ml-auto" aria-current="page">
+    <br />
+    <div aria-label="breadcrumb">
+      <ol class="breadcrumb" style="background: #9d2d27">
+        <li>
+          <h4 style="color: #ffffff">Categorias destacadas</h4>
+        </li>
+      </ol>
+    </div>
+    <Categorias
+      :categorias="this.categiaHome"
+      :productosSeleccionados="this.productosSeleccionados"
+    ></Categorias>
+    <div aria-label="breadcrumb">
+      <ol class="breadcrumb" style="background: #9d2d27">
+        <li>
+          <h4 style="color: #ffffff">Modelos destacados</h4>
+        </li>
+        <!-- <li class="ml-auto" aria-current="page">
             <router-link to="/products" style="color: #ffffff"
               >Todos</router-link
             >
-          </li>
-        </ol>
-      </div>
-      <Productos
-        :bestProducts="this.bestProducts"    
-        :productosSeleccionados="this.productosSeleccionados"
-      ></Productos>
-      <div aria-label="breadcrumb">
-        <ol class="breadcrumb" style="background: #9d2d27">
-          <li>
-            <h4 style="color: #ffffff">Categorias</h4>
-          </li>
-          <li class="ml-auto" aria-current="page">
-            <router-link to="/products" style="color: #ffffff"
-              >Todos</router-link
-            >
-          </li>
-        </ol>
-      </div>
-      <Categorias  :categorias="this.categiaHome" :productosSeleccionados="this.productosSeleccionados"></Categorias>
-      </div>
+          </li> -->
+      </ol>
+    </div>
+    <Productos
+      :bestProducts="this.bestProducts"
+      :productosSeleccionados="this.productosSeleccionados"
+    ></Productos>
   </div>
 </template>
 
@@ -79,87 +70,49 @@
 import Productos from "@/components/Productos/Productos.vue";
 import Categorias from "@/components/Categorias/Categorias.vue";
 
-import axios from "axios";
-import ProductosService from "@/services/ProductosService";
-import CategoriasService from "@/services/CategoriasService";
-
-
 export default {
   name: "Home",
 
-  components: { Productos, Categorias, },
-  props: {   
-      productosSeleccionados: {
+  components: { Productos, Categorias },
+  props: {
+    productosSeleccionados: {
+      type: Array,
+    },
+    bestProducts: {
+      type: Array,
+    },   
+    categiaHome: {
       type: Array,
     },
   },
 
   data() {
-    return {
-      bestProducts: [],
-      categorias: [],
-      ultimoPedido: [],
-      cantidadProductos: 0,
-      miPedido: [],
-      loading: true,
-      categiaHome:[],
-    };
+    return {};
   },
-  mounted() {
-    axios
-      .all([this.getProductos(),this.getCategorias()])
-      .then(() => {
-        this.loading = false;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },
+  mounted() {},
   created() {},
-  methods: {
-    async getProductos() {
-      try {
-        const response = await ProductosService.getProductos();
-        this.bestProducts = response.data;
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    async getCategorias() {
-      try {
-        const response = await CategoriasService.getCategorias();
-        this.categorias = response.data;
-       
-        this.categorias.forEach(categoria => {
-          if (categoria.imagenURL != null)
-            this.categiaHome.push( categoria)
-     
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    },
-  
-  },
+  methods: {},
 };
 </script>
 
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500&display=swap");
+@media only screen and (max-width: 480px) {
+  .breadcrumb {
+    padding: 0rem 0rem !important;
+    margin-bottom: 1rem !important;
+    list-style: none !important;
+    background-color: #e9ecef;
+    display: flex;
+  justify-content: center;
+  }
+  h4 {
+    font-size: 1rem !important;
+    font-family: "Roboto";
+    padding: 2px;
+}
+}
 
-.body {
-  background-color: #f3f2f2;
-  height: auto;
-  font-family: "Roboto";
-  overflow-x: hidden;
-}
-small,
-p,
-h4,
-span {
-  font-family: "Roboto";
-}
 .notify-badge {
   position: relative;
   background: #ffffff;

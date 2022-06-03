@@ -1,17 +1,24 @@
 <template>
-<div>
+  <div>
     <b-row class="text-center" cols="2" cols-sm="8" cols-md="8" cols-lg="4">
       <b-col
         v-for="(categoria, index) in currentPageClubs"
         :key="index"
         class="mb-2"
       >
-      <div  class="zoom" >
-        <img fluid alt="Responsive image" @click="verProductos(categoria)" :src="categoria.imagenURL" /><br>
-      </div>
+        <div class="zoom">
+          <img
+            fluid
+            overlay
+            class="img-fluid"
+            alt="Categorias"
+            @click="verProductos(categoria)"
+            :src="categoria.imagenURL"
+          />
+        </div>
       </b-col>
     </b-row>
-</div>
+  </div>
 </template>
 
 
@@ -60,12 +67,26 @@ export default {
         this.nbPages++;
       }
     },
+    ordenarProductos(productos) {
+      productos.sort(function (a, b) {
+        if (a.numero > b.numero) {
+          return 1;
+        }
+        if (a.numero < b.numero) {
+          return -1;
+        }
+        return 0;
+      });
+      return productos;
+    },
+
     verProductos(categoria) {
-      console.log(categoria.productos);
+      window.scrollTo(0, 0);
       this.$router.push({
-        name: "productosCategoria",
+        name: "stickers",
         params: {
-          bestProducts: categoria.productos,
+          bestProducts: this.ordenarProductos(categoria.productos),
+          nombreCategoria: categoria.categoria,
           productosSeleccionados: this.productosSeleccionados,
         },
       });
@@ -76,17 +97,29 @@ export default {
 
 
 <style>
-
+@media only screen and (max-width: 480px) {
+  .zoom {
+    height: auto;
+    justify-content: center;
+    margin-left: 5px;
+  }
+}
+@media all and (max-width: 600px) {
+  .zoom {
+    height: auto;
+    margin-left: 5px;
+  }
+}
 .best-products {
   margin-bottom: 10px;
 }
 
 .zoom {
-    transition: transform .2s; 
+  transition: transform 0.2s;
 }
- 
+
 .zoom:hover {
-    transform: scale(1.1); 
-     cursor: pointer;
+  transform: scale(1.1);
+  cursor: pointer;
 }
 </style>

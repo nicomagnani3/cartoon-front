@@ -28,7 +28,7 @@ export default () => {
                         'message': error.response.data.message || 'error',
                         'variant': 'danger'  
                     })
-                    router.push("/login");
+                    router.push("/");
                 })
             }
             // Do something with response error

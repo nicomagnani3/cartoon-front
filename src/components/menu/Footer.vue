@@ -1,11 +1,13 @@
 <template>
-   <footer id="sticky-footer" class="footer text-center">
-    <span>
+  <footer id="sticky-footer" class="footer text-center">
+    <div style="background-color: #9d2d27;">
+      <h5> Contactanos:
+    <span>   
       <a href="https://www.instagram.com/cartoon.tag/" target="_black">
         <img
           class="logoCartoon"
           src="@/assets/instalogo.png"
-          alt=""
+          alt="logo cartoon"
           height="auto"
         />
       </a>
@@ -15,35 +17,11 @@
         href="https://mail.google.com/mail/?view=cm&fs=1&to=cartoon.tag@hotmail.com"
         target="_black"
       >
-        <img class="logoMail" src="@/assets/mail.png" alt="" height="auto" />
+        <img class="logoMail" src="@/assets/mail.png" alt="logo mail" height="auto" />
       </a>
-    </span>
-  </footer> 
-<!-- 
-  <footer>
-    <div class="container" id="contacto">
-      <div class="row">
-        <div class="col-md-12">
-          <h1>CONTACTO</h1>
-          <br /><br />
-        </div>
-      </div>
-      <div class="row social">
-        <div class="col-3"></div>
-        <div class="col-2">
-          <a href="mailto:contacto@maliciusculebra.com"
-            ><img src="@/assets/mail1.svg" alt=""
-          /></a>
-        </div>
-
-        <div class="col-2">
-          <a target="_blank" href="https://www.instagram.com/jonatanariste/"
-            ><img src="@/assets/insta2.svg" alt=""
-          /></a>
-        </div>
-      </div>
+    </span></h5>
     </div>
-  </footer> -->
+  </footer>
 </template>
 
 
@@ -60,25 +38,37 @@ export default {
 
 
 <style>
+@media only screen and (max-width: 480px) {
+#sticky-footer {
+  background-color: #9d2d27;
+  text-align: left !important;
+}
+h5{
+  font-size: 1.0rem;
+}
+}
 .footer-text {
   font-size: 80%;
 }
 #sticky-footer {
   background-color: #9d2d27;
+  height: 10vh;
 }
 .logoCartoon {
-  max-width: 35px;
-  margin: 15px;
+  max-width: 30px;
+  margin: 10px;
 }
 .logoMail {
-  max-width: 44px;
-}/* 
-
-footer {
-  background: #757575;
-  height: 50vh;
-  padding-top: 30px;
+  max-width:35px;
+  
+} footer {
+  background-color: #9d2d27;
+  height: 40vh;
+ 
 }
+/* 
+
+
 footer h1 {
   text-align: center;
   font-weight: 100;

@@ -1,191 +1,292 @@
 <template >
   <div>
-    <div v-for="(pedido, index) in miPedido" :key="index" class="container">
-      <b-row>
-        <div   style="background: #9d2d27">
-          <div class="notify-cantidad">{{ pedido.cantidad }}</div>
+    <div class="listaPedido">
+      <div v-for="(pedido, index) in miPedido" :key="index" class="container">
+        <p>
+          <!-- <small class="notify-cantidad">{{ pedido.cantidad }}</small> -->
           <img
-         
+            style="background: #9d2d27"
             :src="pedido.imagen"
             alt="Card image cap"
             class="imagenLeft"
-        /></div>
-        <b-col class="textoPedido">
-          <small>
-            {{ pedido.nombre }} - {{ pedido.tamaño }}</small
+          />
+          <b-button
+            variant="danger"
+            style="float: right"
+            @click="borrarPedido(index)"
+            >X</b-button
           >
-          <small>
-            ${{calcularPrecio(pedido.tamaño)}}</small
-          >
-          </b-col
-        >
 
-        <b-col col lg="1">
-          <b-button variant="danger" style="float: right" @click="borrarPedido(index)">X</b-button></b-col
-        >
-      </b-row>
+          <small> {{ pedido.tamaño }}</small>
+          <small>
+            ${{ calcularPrecio(pedido.tamaño) }} x {{ pedido.cantidad }}</small
+          >
+          <b-form-spinbutton
+            style="margin-left: 4px"
+            id="sb-small"
+            size="sm"
+            inline
+            step="1"
+            v-model="pedido.cantidad"
+          ></b-form-spinbutton>
+        </p>
+      </div>
     </div>
     <div>
       <div style="text-align: right">
+        <div>
+          <a
+            v-if="calcularCantidad() > 1"
+            @click="borrarTodos()"
+            class="vaciarCarro"
+            >Vaciar carrito <b-icon icon="trash2"
+          /></a>
+        </div>
         <br />
         <div>
           <small v-if="calcularCantidad() < 5" style="color: red"
             >Debe elegir como minimo 5 stickers</small
           >
         </div>
+        <div
+          v-if="calcularCantidad() > 5"
+          style="width: 50%; text-align: justify"
+        >    
+        </div>
         <div>
-        <small style="float:left"> Cantidad: {{ calcularCantidad() }} </small>
-        <small><b> Total: ${{ calcularTotal() }} </b></small></div>
+          <small style="float: left">
+            Cantidad: {{ calcularCantidad() }}
+          </small>        
+          <small
+            ><b > Total: ${{ calcularTotal() }} </b></small
+          >
+        </div>
+
       </div>
       <b-button
         class="mt-2"
         variant="success"
         block
         :disabled="calcularCantidad() < 5"
-        :href="
-          'https://mail.google.com/mail/?view=cm&fs=1&to=cartoon.tag@hotmail.com' +
-          '&body=Hola!%20,queria%20pedir%20' +
-          this.armarPedidoTexto() +
-          '&su=Pedido stickers'
-        "
-        target="_black"
+        @click="completarDatosPersonales()"
         >Confirmar pedido</b-button
       >
+    </div>
+    <div class="modalDatosPersonales">
+      <b-modal
+        title="Mis datos"
+        class="modalCarrito"
+        centered
+        ref="modalDatosPersonales"
+        hide-footer
+        body-bg-variant="light"
+        footer-bg-variant="light"
+        header-bg-variant="light"
+      >
+        <DatosPersonales
+          @okDetallesPersonales="okDetallesPersonales"
+          :cantidad="calcularCantidad()"
+          :total="calcularTotal()"
+          :message="armarPedido()"
+        ></DatosPersonales>
+      </b-modal>
     </div>
   </div>
 </template>
 
 <script>
+import DatosPersonales from "@/components/Carrito/DatosPersonales.vue";
 export default {
   name: "Carrito",
-  components: {},
+  components: { DatosPersonales },
   props: {
     miPedido: {
       type: Array,
     },
   },
   data() {
-    return {
+    return {  
+      cantidad: 1,
       loading: true,
       pedidoOrdenado: [],
-      mini: 30,
-      regular: 40,
-      grande: 70,
-      mayor20unidadesMini: 25,
-      mayor20unidadesRegular: 35,
-      mayor20unidadesGrande: 65,
+      mini: 40,
+      regular: 80,
+      grande: 140,
+      mayor10unidadesMini: 35,
+      mayor10unidadesRegular: 70,
+      mayor10unidadesGrande: 130,
+      mayor20unidadesMini: 30,
+      mayor20unidadesRegular: 60,
+      mayor20unidadesGrande: 110,
     };
   },
   created() {},
   methods: {
-    aceptarDetalle() {
-      this.$emit("okDetalles");
+  
+    cambiarCantidad(pedido) {
+      pedido.cantidad = Number(pedido.cantidad) + Number(this.cantidad);
     },
-    calcularCantidad() {
-      let cantidad = 0;
-      this.miPedido.forEach((pedido) => {
-        cantidad = Number(cantidad) + Number(pedido.cantidad);
-      });
-      return cantidad;
-    },
-    calcularPrecio(tamaño){
-      if (this.miPedido.length < 20) {
-         if (tamaño == "Mini") {
-            return this.mini
-          }
-          if (tamaño == "Regular") {
-            return this.regular
-          }
-          if (tamaño == "Grande") {
-            return this.grande
-          }
-      }else{
-        if (tamaño == "Mini") {
-          return this.mayor20unidadesMini
-          }
-          if (tamaño == "Regular") {
-            return this.mayor20unidadesRegular
-          }
-          if (tamaño == "Grande") {
-            return this.mayor20unidadesGrande
-          }
-
-
-      }
-    },
-    calcularTotal() {
-      let total = 0;
-      if (this.miPedido.length < 20) {
-        this.miPedido.forEach((pedido) => {
-          if (pedido.tamaño == "Mini") {
-            total = Number(total) + Number(pedido.cantidad) * Number(30);
-          }
-          if (pedido.tamaño == "Regular") {
-            total = Number(total) + Number(pedido.cantidad) * Number(40);
-          }
-          if (pedido.tamaño == "Grande") {
-            total = Number(total) + Number(pedido.cantidad) * Number(70);
-          }
-        });
-      } else {
-        this.miPedido.forEach((pedido) => {
-          if (pedido.tamaño == "Mini") {
-            total = Number(total) + Number(pedido.cantidad) * Number(25);
-          }
-          if (pedido.tamaño == "Regular") {
-            total = Number(total) + Number(pedido.cantidad) * Number(35);
-          }
-          if (pedido.tamaño == "Grande") {
-            total = Number(total) + Number(pedido.cantidad) * Number(65);
-          }
-        });
-      }
-      return total;
-    },
-   
-    armarPedidoTexto() {
+    armarPedido() {
       let pedidoMail = "";
       this.miPedido.forEach((pedido) => {
         pedidoMail =
           pedidoMail +
-          "%0A" +
-          pedido.nombre +
-          "%20" +
+          " " +
+          pedido.categoria +
+          " " +
+          pedido.numero +
+          " " +
           "Tamaño:" +
-          "%20" +
+          " " +
           pedido.tamaño +
-          "%20" +
+          " " +
           "Cantidad:" +
-          "%20" +
+          " " +
           pedido.cantidad +
-          ";";
+          "\n";
       });
+
       return pedidoMail;
     },
-    borrarPedido(pedidoBorrar){
-      console.log(pedidoBorrar)
-this.miPedido.splice(pedidoBorrar,1);
-console.log(this.miPedido)
-    }
+
+    calcularCantidad() {
+      let cantidad = 0;
+      this.miPedido.forEach((pedido) => {      
+        cantidad = Number(cantidad) + Number(pedido.cantidad);
+      });
+      return cantidad;
+    },
+    calcularPrecio(tamaño) {
+        let cantMini=0,cantRegular=0,cantGrande=0
+       this.miPedido.forEach((pedido) => {
+        if (pedido.tamaño == "Mini") {
+           cantMini= cantMini +pedido.cantidad
+          }
+          if (pedido.tamaño == "Regular") {
+            cantRegular= cantRegular +pedido.cantidad
+          }
+          if (pedido.tamaño == "Grande") {
+            cantGrande = cantGrande + pedido.cantidad
+          }
+      });  
+        if (tamaño == "Mini") {
+           if (cantMini > 9 && cantMini < 20 ){
+              return this.mayor10unidadesMini;
+            }
+            if ( cantMini > 19 ){
+              return this.mayor20unidadesMini;
+            }            
+             return this.mini;
+             
+        }
+        if (tamaño == "Regular") {
+           if (cantRegular > 9 && cantRegular < 20){
+              return this.mayor10unidadesRegular;
+            }
+             if ( cantRegular > 19 ){
+              return this.mayor20unidadesRegular;
+            }        
+             return this.regular;
+             
+        }
+        if (tamaño == "Grande") {
+           if (cantGrande > 9 && cantGrande < 20  ){
+              return this.mayor10unidadesGrande;
+            }
+             if ( cantGrande > 19 ){
+              return this.mayor20unidadesGrande;
+            }    
+             return this.grande;
+            
+        }
+    },
+    calcularTotal() {
+      //let cantidadTotal = this.calcularCantidad();
+      let total = 0
+      let cantMini=0,cantRegular=0,cantGrande=0
+      this.miPedido.forEach((pedido) => {
+         if (pedido.tamaño == "Mini") {
+           cantMini= cantMini +pedido.cantidad
+          }
+          if (pedido.tamaño == "Regular") {
+            cantRegular= cantRegular +pedido.cantidad
+          }
+          if (pedido.tamaño == "Grande") {
+            cantGrande = cantGrande + pedido.cantidad
+          }
+     });
+       this.miPedido.forEach((pedido) => {
+          if (pedido.tamaño == "Mini") {
+              if (cantMini > 9 && cantMini < 20 ){
+              total = Number(total) + Number(pedido.cantidad) * Number(this.mayor10unidadesMini);
+            }
+             if ( cantMini > 19 ){
+              total = Number(total) + Number(pedido.cantidad) * Number( this.mayor20unidadesMini);
+            }  
+            if ( cantMini < 10 ){
+              total = Number(total) + Number(pedido.cantidad) * Number( this.mini);
+            }
+          }
+          if (pedido.tamaño == "Regular") {
+                if (cantRegular > 9 && cantRegular < 20){
+              total = Number(total) + Number(pedido.cantidad) * Number(this.mayor10unidadesRegular);
+            }
+            if ( cantRegular > 19 ){
+              total = Number(total) + Number(pedido.cantidad) * Number(this.mayor20unidadesRegular);
+            }
+             if ( cantRegular < 10 ){
+              total = Number(total) + Number(pedido.cantidad) * Number(this.regular);
+            }
+          }
+          if (pedido.tamaño == "Grande") {
+            if (cantGrande > 9 && cantGrande < 20  ){
+              total = Number(total) + Number(pedido.cantidad) * Number(this.mayor10unidadesGrande);
+            }
+            if ( cantGrande > 19 ){
+              total = Number(total) + Number(pedido.cantidad) * Number(this.mayor20unidadesGrande);
+            }
+            if ( cantGrande < 10 ){
+              total = Number(total) + Number(pedido.cantidad) * Number(this.grande);
+            }
+
+          }
+        });      
+  
+      return total;
+    },
+
+    borrarPedido(pedidoBorrar) {
+      this.miPedido.splice(pedidoBorrar, 1);
+    },
+    borrarTodos() {
+      this.miPedido.splice(0, this.miPedido.length);
+    },
+    completarDatosPersonales() {
+      this.$refs["modalDatosPersonales"].show();
+    },
+    okDetallesPersonales() {
+      this.$refs["modalDatosPersonales"].hide();
+      this.$emit("okDetalles");
+    },
   },
 };
 </script>
 
 <style>
 @media only screen and (max-width: 480px) {
-.textoPedido{
-     font-size: 10px;
-        display: contents;
+  .textoPedido {
+    font-size: 10px;
+    display: contents;
     align-items: center;
-}
-.img{
-      max-width: 40px;
+  }
+  .img {
+    max-width: 40px;
     border: 0px solid transparent;
     margin: auto;
-    height: 73px;
+    height: 63px;
     object-fit: contain;
-}
-.notify-cantidad {
+  }
+  .notify-cantidad {
     position: absolute;
     left: 64px;
     background-color: #f1f8e9;
@@ -196,18 +297,19 @@ console.log(this.miPedido)
     color: #558b2e;
     font-size: 10px;
     z-index: 1;
+  }
+  .imagenLeft {
+    margin: auto;
+    height: 63px !important;
+    object-fit: contain;
+    max-width: 55px !important;
+    border: 10px solid transparent !important;
+  }
 }
-.col{
-  padding-right:0px;
-    padding-left: 0px;
-}
-}
-
-
 
 .izquierda {
   display: inline-block;
-  width: 20%;
+
   height: auto;
 }
 .derecha {
@@ -221,8 +323,11 @@ console.log(this.miPedido)
   border: #d0d0d0 1px solid;
   border-radius: 9px;
 }
+.listaPedido {
+  max-height: 40vh;
+  overflow-y: auto;
+}
 .notify-cantidad {
-  position: absolute;
   left: 70px;
   background-color: #f1f8e9;
   padding: 0 6px;
@@ -233,14 +338,19 @@ console.log(this.miPedido)
   font-size: 12px;
   z-index: 1;
 }
-.textoPedido{
+.textoPedido {
   text-align: center;
 }
-.imagenLeft{
- max-width: 65px;
-              border: 0px solid transparent;
-              margin: auto;
-              height: 73px;
-              object-fit: contain;
+.imagenLeft {
+  border: 10px solid transparent;
+  margin: auto;
+  height: 73px;
+  object-fit: contain;
+  max-width: 74px;
+}
+.vaciarCarro {
+  color: rgb(157, 45, 39);
+  font-size: 12px;
+  cursor: pointer;
 }
 </style>

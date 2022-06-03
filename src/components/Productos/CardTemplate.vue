@@ -1,13 +1,27 @@
 <template>
-  <div>
+  <div >
     <div class="project-image-wrapper">
-      <img class="project-image" :src="item.url" />     
+      <img class="project-image" :src="item.url"  :alt="'imagen nro'+item.id" />
     </div>
     <div class="cuerpo">
-      <div style="text-align: center">
-        <small
-          ><strong>{{ item.nombre }}</strong></small
-        >
+      <div style="text-align: center" class="selectTamaño">
+        <div v-if="item.nombre != null && item.nombre != ''">
+          <small
+            ><strong
+              >{{ item.nombre}} - {{ item.numero }}</strong
+            ></small
+          >
+        </div>
+        <div v-else-if="item.categorias != null">
+          <small
+            ><strong>{{ item.categorias[0].categoria }} - {{ item.numero }}</strong></small
+          >
+        </div>
+        <div v-else>
+          <small
+            ><strong>{{ nombreCategoria }} - {{ item.numero }}</strong></small
+          >
+        </div>
         <b-form-select
           v-model="selected"
           @change="cambiarCantidad()"
@@ -15,7 +29,6 @@
           size="sm"
           class="mt-3"
           id="selector"
-          style="font-family: 'Roboto'"
         ></b-form-select>
       </div>
       <div style="text-align: center">
@@ -25,13 +38,13 @@
           inline
           class="mt-3"
           wrap
-          min="1"
+          min="0"
           v-model="cantidad"
           max="20"
-          placeholder="1"
+          placeholder="0"
         ></b-form-spinbutton>
       </div>
-      <br>
+      <br />
       <div class="d-flex justify-content-between align-items-center">
         <div
           class="d-flex justify-content-center"
@@ -42,11 +55,7 @@
             @click="agregarCarrito(item)"
             style="cursor: pointer"
           >
-            <img
-              src="@/assets/carrito.png"
-              alt=""
-              class="imagnesIcon"
-            />
+            <img src="@/assets/carrito.png" :alt="'carrito'+item.numero" class="imagnesIcon" />
           </a>
         </div>
       </div>
@@ -57,13 +66,13 @@
 <script>
 export default {
   name: "cardTemplate",
-  props: ["item", "productosSeleccionados"],
+  props: ["item", "productosSeleccionados", "nombreCategoria"],
   data() {
     return {
-      cantidad: 1,
+      cantidad: 0,
       selected: "Regular",
       options: [
-        { value: null, text: "Tamaño", disabled: true },
+        { value: null, text: "Tamaño", disabled: true},
         { value: "Mini", text: "Mini" },
         { value: "Regular", text: "Regular" },
         { value: "Grande", text: "Grande" },
@@ -72,30 +81,39 @@ export default {
   },
   components: {},
 
-  methods: {
-    mostrarImagen(item) {
-      return item.url;
-    },
+  methods: {   
     cambiarCantidad() {
       this.cantidad = 1;
     },
     agregarCarrito(item) {
-      if (!this.yaEstaSeleccionado(item.id, this.selected, this.cantidad)) {
-        this.productosSeleccionados.push({
-          pedido: item.id,
-          tamaño: this.selected,
-          cantidad: this.cantidad,
-          imagen: item.url,
-          nombre: item.nombre,
-        });
-        this.$emit("seleccionoProducto");
+      
+      if (this.cantidad > 0) {
+        if (!this.yaEstaSeleccionado(item.id, this.selected, this.cantidad)) {
+          let categoria = this.verNombreCategoria(item);
+          this.productosSeleccionados.push({
+            pedido: item.id,
+            tamaño: this.selected,
+            cantidad: this.cantidad,
+            imagen: item.url,
+            nombre: item.nombre,
+            numero: item.numero,
+            categoria: categoria,
+          });
+          this.$emit("seleccionoProducto");
+        }
+      }
+    },
+    verNombreCategoria(item) {   
+      if (item.nombre != null && item.nombre != '') {
+        return item.nombre;
+      } else {
+        return this.nombreCategoria;
       }
     },
     yaEstaSeleccionado(id, tamaño, cantidad) {
       let retornan = false;
-      this.productosSeleccionados.forEach((pedido) => {
+      this.productosSeleccionados.forEach((pedido) => {        
         if (pedido.pedido == id && pedido.tamaño == tamaño) {
-          console.log(cantidad);
           pedido.cantidad = Number(pedido.cantidad) + Number(cantidad);
           retornan = true;
         }
@@ -107,5 +125,27 @@ export default {
 };
 </script>
 <style >
+.selectTamaño select {
+  text-align-last: center !important;
+  font-family: "Roboto";
+  font-size: 16px;
+}
+.project-image-wrapper {
+  position: relative;
+  background: #9d2d27;
+}
+
+.project-image {
+  max-width: 183px;
+  border: 10px solid transparent;
+  display: block;
+  margin: auto;
+  height: 150px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  object-fit: contain;
+}
 
 </style>

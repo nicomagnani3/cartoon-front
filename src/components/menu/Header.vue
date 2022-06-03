@@ -1,6 +1,6 @@
 <template>
     <div class="Header text-left" >
-        <img  class="logoHeader" src="@/assets/logoCartoon.png"  alt="" height="auto" >
+        <img  class="logoHeader" src="@/assets/logoCartoon.png"  alt="logo" height="auto" >
     </div>
 
 </template>

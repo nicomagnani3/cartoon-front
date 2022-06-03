@@ -1,66 +1,185 @@
 <template>
   <div>
-    <div class="wrapper">
-      <Menu       :productosSeleccionados="this.productosSeleccionados" />
-      <router-view class="content"       :productosSeleccionados="this.productosSeleccionados" />
+    <div v-if="loading" class="text-center">
+        <br /><br /><br /><br />
+      <img
+        class="logo"
+        src="@/assets/logoRojo.png"
+        alt="logo"
+        height="auto"
+        @click="contador()"
+      /><br /><br />
+      <small>Estás a un paso de pedir tus stickers</small><br />
+      <small v-if="Number(this.tiempo) > Number(5)">
+        ¿Sabias que comprando mas de 20 unidades obtenes un gran descuento ?
+        <b-icon icon="emoji-sunglasses" /></small
+      ><br />
+      <small v-if="Number(this.tiempo) > Number(10)">
+        Estamos cargando todos los modelos...
+        <b-icon icon="emoji-smile-upside-down" /></small
+      ><br />
+
+      <small v-if="Number(this.tiempo) > Number(15)">
+        Nuestro catálogo es tan amplio que genera demoras  <b-icon
+          icon="emoji-wink" /></small
+      ><br />
+      <small v-if="Number(this.tiempo) > Number(15)" style="color: #9d2d27">
+        Te recomendamos recargar la web
+        <b-icon icon="emoji-dizzy" animation="spin"
+      /></small>
     </div>
-    <Footer class="footer" />
+    <div v-else>
+      <div class="wrapper">
+        <Menu
+          :productosSeleccionados="this.productosSeleccionados"
+          :categorias="this.categorias"
+          :categoria1="this.categoria1"
+          :categoria2="this.categoria2"
+          :categoria3="this.categoria3"
+          :categoria4="this.categoria4"
+          :categoria5="this.categoria5"
+          :todasCategorias="this.todasCategorias"
+        />
+        <router-view
+          class="content"
+          :productosSeleccionados="this.productosSeleccionados"
+          :bestProducts="this.bestProducts"
+          :categiaHome="this.categiaHome"
+        />
+      </div>
+     <!--  <Footer class="footer" /> -->
+    </div>
   </div>
 </template>
 
 <script>
-import Footer from "@/components/menu/Footer.vue";
-import Menu from "@/components/menu/Menu.vue";
+import axios from "axios";
+import ProductosService from "@/services/ProductosService";
+import CategoriasService from "@/services/CategoriasService";
+/* import Footer from "@/components/menu/Footer.vue";
+ */import Menu from "@/components/menu/Menu.vue";
 
 export default {
   name: "Dashboard",
   components: {
     Menu,
-    Footer,
-  },
-   data() {
+/*     Footer,
+ */  },
+  data() {
     return {
-      
-   productosSeleccionados:[]
+      productosSeleccionados: [],
+      todasCategorias: [],
+      bestProducts: [],
+      categorias: [],
+      loading: true,
+      categiaHome: [],
+      categoria1: [],
+      categoria2: [],
+      categoria3: [],
+      categoria4: [],
+      categoria5: [],
+      tiempo: 0,
     };
   },
   computed: {},
+  created() {},
   methods: {
-    printAlltoast() {
-      this.toast.forEach((data) => {
-        this.addToast(data);
-        let index = this.toast.indexOf(data);
-        if (index > -1) {
-          this.toast.splice(index, 1);
+    contador() {
+      setInterval(() => {
+        this.tiempo = Number(this.tiempo) + Number(1);
+      }, 1000);
+    },
+    async getProductos() {
+      try {
+        const response = await ProductosService.getProductos();       
+        this.bestProducts = response.data;
+        this.ordenarProductos();
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    ordenarProductos() {
+      this.bestProducts.sort(function (a, b) {
+        if (a.updatedAt < b.updatedAt) {
+          return 1;
         }
+        if (a.updatedAt > b.updatedAt) {
+          return -1;
+        }
+        return 0;
       });
     },
 
-    addToast(data) {
-      this.$bvToast.toast(data.message, {
-        title: data.title || "",
-        toaster: data.toaster || "b-toaster-top-center",
-        solid: true,
-        variant: data.variant || "secondary",
-        appendToast: data.append || false,
+    ordenarDatos(categorias) {
+      return categorias.sort(function (a, b) {
+        if (a.categoria > b.categoria) {
+          return 1;
+        }
+        if (a.categoria < b.categoria) {
+          return -1;
+        }
+        return 0;
       });
     },
+    async getCategorias() {
+      try {
+        const response = await CategoriasService.getCategorias();
+        this.categorias = response.data;
+        let categoriasOrdenadas = this.ordenarDatos(this.categorias);
+        this.todasCategorias = categoriasOrdenadas;
+        categoriasOrdenadas.forEach((categoria) => {
+          if (categoria.imagenURL != null) this.categiaHome.push(categoria);
+          if (categoria.ubicacion == 1) this.categoria1.push(categoria);
+          if (categoria.ubicacion == 2) this.categoria2.push(categoria);
+          if (categoria.ubicacion == 3) this.categoria3.push(categoria);
+          if (categoria.ubicacion == 4) this.categoria4.push(categoria);
+          if (categoria.ubicacion == 5) this.categoria5.push(categoria);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
   },
-  mounted() {},
+  mounted() {
+    axios
+      .all([this.contador(), this.getProductos(), this.getCategorias()])
+      .then(() => {
+        this.loading = false;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
 };
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css?family=Montserrat&display=swap");
-body {
-  font-family: "Montserrat", sans-serif !important;
-  background-color: #ebebeb !important;
- overflow-x: hidden;
+@media (max-width: 600px) {
+  .logo {
+    max-width: 90%;
+    
+  }
 }
-
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500&display=swap");
+body {
+  font-family: "Roboto" !important;
+  background-color: #ebebeb !important;
+  overflow-x: hidden !important;
+  height: auto;
+}
 html {
   position: relative;
   height: 100%;
+  overflow-x: hidden !important;
+}
+small,
+p,
+h4,
+span,
+h3,
+a,
+strong {
+  font-family: "Roboto";
 }
 
 .box-shadow {
@@ -94,13 +213,9 @@ html {
 }
 
 .footer {
-  /*display: block;*/
-
   margin-top: 10px;
   height: 50px;
   line-height: 50px;
-  /*
-      */
   color: white;
   background-color: #ececec;
 }

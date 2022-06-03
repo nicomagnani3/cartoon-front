@@ -27,7 +27,7 @@ const router = new Router({
        },     
        {
         path: '/ProductosCategoria',
-         name: 'productosCategoria',
+         name: 'stickers',
         component: ProductosCategoria,   
         props: true
       

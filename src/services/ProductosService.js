@@ -5,7 +5,7 @@ const API_URL = "/";
 export default {
 
     getProductos(credentials) {    
-        return Api().get(API_URL + API_USER + "productos", credentials)
+        return Api().get(API_URL + API_USER + "destacados", credentials)
     },
   
 }
