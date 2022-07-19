@@ -17,19 +17,39 @@
             alt="image slot 1"
           ></b-carousel-slide>
           <b-carousel-slide
-            img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1650085159/Slider/PRECIOS_1_wxraz6.png"
-            class="item"
-            alt="image slot 1"
-          ></b-carousel-slide>
-          <b-carousel-slide
-            img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1650085159/Slider/PRECIOS_2_nldfkj.png"
+            img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1658190464/Slider/catalogo_1_drigsd.jpg"
             class="item"
             alt="image slot 2"
           ></b-carousel-slide>
           <b-carousel-slide
-            img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1650085159/Slider/PRECIOS_3_omitx0.png"
+            img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1658190464/Slider/catalogo_2_twrfid.jpg"
             class="item"
             alt="image slot 3"
+          ></b-carousel-slide>
+          <b-carousel-slide
+            img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1658196241/Slider/catalogo_3_r4vcsz.jpg"
+            class="item"
+            alt="image slot 4"
+          ></b-carousel-slide>
+          <b-carousel-slide
+            img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1658190464/Slider/EMPRENDEDORES_t5yskd.jpg"
+            class="item"
+            alt="image slot 5"
+          ></b-carousel-slide>
+             <b-carousel-slide
+            img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1658190464/Slider/EMPRENDEDORES_1_tpsco9.jpg"
+            class="item"
+            alt="image slot 6"
+          ></b-carousel-slide>
+             <b-carousel-slide
+            img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1658190464/Slider/EMPRENDEDORES_2_qium8z.jpg"
+            class="item"
+            alt="image slot 7"
+          ></b-carousel-slide>
+             <b-carousel-slide
+            img-src="https://res.cloudinary.com/cartoon-tag/image/upload/v1658190465/Slider/EMPRENDEDORES_3_tn73az.jpg"
+            class="item"
+            alt="image slot 8"
           ></b-carousel-slide>
         </div>
       </b-carousel>

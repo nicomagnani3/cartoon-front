@@ -51,17 +51,15 @@
         <div
           v-if="calcularCantidad() > 5"
           style="width: 50%; text-align: justify"
-        >    
-        </div>
+        ></div>
         <div>
           <small style="float: left">
             Cantidad: {{ calcularCantidad() }}
-          </small>        
+          </small>
           <small
-            ><b > Total: ${{ calcularTotal() }} </b></small
+            ><b> Total: ${{ calcularTotal() }} </b></small
           >
         </div>
-
       </div>
       <b-button
         class="mt-2"
@@ -105,24 +103,23 @@ export default {
     },
   },
   data() {
-    return {  
+    return {
       cantidad: 1,
       loading: true,
       pedidoOrdenado: [],
       mini: 40,
       regular: 80,
       grande: 140,
-      mayor10unidadesMini: 35,
-      mayor10unidadesRegular: 70,
-      mayor10unidadesGrande: 130,
-      mayor20unidadesMini: 30,
-      mayor20unidadesRegular: 60,
-      mayor20unidadesGrande: 110,
+      mayor15unidadesMini: 35,
+      mayor15unidadesRegular: 70,
+      mayor15unidadesGrande: 120,
+      mayor50unidadesMini: 25,
+      mayor50unidadesRegular: 55,
+      mayor50unidadesGrande: 100,
     };
   },
   created() {},
   methods: {
-  
     cambiarCantidad(pedido) {
       pedido.cantidad = Number(pedido.cantidad) + Number(this.cantidad);
     },
@@ -151,14 +148,17 @@ export default {
 
     calcularCantidad() {
       let cantidad = 0;
-      this.miPedido.forEach((pedido) => {      
+      this.miPedido.forEach((pedido) => {
         cantidad = Number(cantidad) + Number(pedido.cantidad);
       });
       return cantidad;
     },
-    calcularPrecio(tamaño) {
+      calcularPrecio(tamaño) {
         let cantMini=0,cantRegular=0,cantGrande=0
+        let cantidad=0
        this.miPedido.forEach((pedido) => {
+          cantidad = cantidad + pedido.cantidad
+
         if (pedido.tamaño == "Mini") {
            cantMini= cantMini +pedido.cantidad
           }
@@ -170,88 +170,89 @@ export default {
           }
       });  
         if (tamaño == "Mini") {
-           if (cantMini > 9 && cantMini < 20 ){
-              return this.mayor10unidadesMini;
+           if (cantidad > 14  && cantidad < 50 ){
+              return this.mayor15unidadesMini;
             }
-            if ( cantMini > 19 ){
-              return this.mayor20unidadesMini;
+            if ( cantMini > 49 ){
+              return this.mayor50unidadesMini;
             }            
              return this.mini;
              
         }
         if (tamaño == "Regular") {
-           if (cantRegular > 9 && cantRegular < 20){
-              return this.mayor10unidadesRegular;
+           if (cantidad >14 && cantidad < 50 ){
+              return this.mayor15unidadesRegular;
             }
-             if ( cantRegular > 19 ){
-              return this.mayor20unidadesRegular;
+             if ( cantidad > 49 ){
+              return this.mayor50unidadesRegular;
             }        
              return this.regular;
              
         }
         if (tamaño == "Grande") {
-           if (cantGrande > 9 && cantGrande < 20  ){
-              return this.mayor10unidadesGrande;
+                if (cantidad >14 && cantidad < 50 ){
+              return this.mayor15unidadesGrande;
             }
-             if ( cantGrande > 19 ){
-              return this.mayor20unidadesGrande;
+             if ( cantidad > 49 ){
+              return this.mayor50unidadesGrande;
             }    
              return this.grande;
             
         }
     },
     calcularTotal() {
-      //let cantidadTotal = this.calcularCantidad();
-      let total = 0
-      let cantMini=0,cantRegular=0,cantGrande=0
+      let cantidadTotal = this.calcularCantidad();
+      let total = 0; 
       this.miPedido.forEach((pedido) => {
-         if (pedido.tamaño == "Mini") {
-           cantMini= cantMini +pedido.cantidad
+        if (pedido.tamaño == "Mini") {
+          if (cantidadTotal > 14 && cantidadTotal < 50) {
+            total =
+              Number(total) +
+              Number(pedido.cantidad) * Number(this.mayor15unidadesMini);
           }
-          if (pedido.tamaño == "Regular") {
-            cantRegular= cantRegular +pedido.cantidad
+          if (cantidadTotal > 49) {
+            total =
+              Number(total) +
+              Number(pedido.cantidad) * Number(this.mayor50unidadesMini);
           }
-          if (pedido.tamaño == "Grande") {
-            cantGrande = cantGrande + pedido.cantidad
+          if (cantidadTotal <= 14) {
+            total = Number(total) + Number(pedido.cantidad) * Number(this.mini);
           }
-     });
-       this.miPedido.forEach((pedido) => {
-          if (pedido.tamaño == "Mini") {
-              if (cantMini > 9 && cantMini < 20 ){
-              total = Number(total) + Number(pedido.cantidad) * Number(this.mayor10unidadesMini);
-            }
-             if ( cantMini > 19 ){
-              total = Number(total) + Number(pedido.cantidad) * Number( this.mayor20unidadesMini);
-            }  
-            if ( cantMini < 10 ){
-              total = Number(total) + Number(pedido.cantidad) * Number( this.mini);
-            }
+        }
+        if (pedido.tamaño == "Regular") {
+          if (cantidadTotal > 14   && cantidadTotal < 50) {
+            total =
+              Number(total) +
+              Number(pedido.cantidad) * Number(this.mayor15unidadesRegular);
           }
-          if (pedido.tamaño == "Regular") {
-                if (cantRegular > 9 && cantRegular < 20){
-              total = Number(total) + Number(pedido.cantidad) * Number(this.mayor10unidadesRegular);
-            }
-            if ( cantRegular > 19 ){
-              total = Number(total) + Number(pedido.cantidad) * Number(this.mayor20unidadesRegular);
-            }
-             if ( cantRegular < 10 ){
-              total = Number(total) + Number(pedido.cantidad) * Number(this.regular);
-            }
+          if (cantidadTotal > 49) {
+            total =
+              Number(total) +
+              Number(pedido.cantidad) * Number(this.mayor50unidadesRegular);
           }
-          if (pedido.tamaño == "Grande") {
-            if (cantGrande > 9 && cantGrande < 20  ){
-              total = Number(total) + Number(pedido.cantidad) * Number(this.mayor10unidadesGrande);
-            }
-            if ( cantGrande > 19 ){
-              total = Number(total) + Number(pedido.cantidad) * Number(this.mayor20unidadesGrande);
-            }
-            if ( cantGrande < 10 ){
-              total = Number(total) + Number(pedido.cantidad) * Number(this.grande);
-            }
+          if (cantidadTotal <= 14) {
+            total =
+              Number(total) + Number(pedido.cantidad) * Number(this.regular);
+          }
+        }
+        if (pedido.tamaño == "Grande") {
+            if (cantidadTotal > 14  && cantidadTotal < 50 ) {
+            total =
+              Number(total) +
+              Number(pedido.cantidad) * Number(this.mayor15unidadesGrande);
+          }
+          if (cantidadTotal > 49) {
+            total =
+              Number(total) +
+              Number(pedido.cantidad) * Number(this.mayor50unidadesGrande);
+          }
+          if (cantidadTotal <= 14) {
+            total =
+              Number(total) + Number(pedido.cantidad) * Number(this.grande);
+          }
+        }
+      });
 
-          }
-        });      
-  
       return total;
     },
 
