@@ -1,6 +1,18 @@
 <template>
   <div>
     <div v-if="loading" class="text-center">
+    <br /><br /><br /><br />
+      <img
+        class="logoVacaciones"
+        src="https://res.cloudinary.com/cartoon-tag/image/upload/v1659396321/Slider/vacaciones_agosto_znyxhr.png"
+        alt="logo"
+        height="auto"
+        @click="contador()"
+      />
+
+    </div>
+    <div v-else> 
+    <div v-if="loading" class="text-center">
         <br /><br /><br /><br />
       <img
         class="logo"
@@ -49,6 +61,7 @@
       </div>
      <!--  <Footer class="footer" /> -->
     </div>
+  </div>
   </div>
 </template>
 
@@ -144,7 +157,7 @@ export default {
     axios
       .all([this.contador(), this.getProductos(), this.getCategorias()])
       .then(() => {
-        this.loading = false;
+        this.loading = true;
       })
       .catch((err) => {
         console.log(err);
@@ -158,6 +171,9 @@ export default {
   .logo {
     max-width: 90%;
     
+  }
+   .logoVacaciones {
+    max-width: 300px !important;
   }
 }
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500&display=swap");
@@ -226,6 +242,13 @@ strong {
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+.logoVacaciones{
+  max-width:600px;
+  width: 100%;
+   -webkit-animation: tiembla 2.1s infinite;
+  text-align: center;
+  font-family: "Roboto";
 }
 </style>
 
